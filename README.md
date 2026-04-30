@@ -6,6 +6,18 @@ I got very tired of not being able to adjust fonts and icons the exact way I wan
 
 So I started coding this card with the help of GPT 5.4/5.5 Codex and I added everything that I had missed. You can template just about everything, you can make the icon as big as you want, you can make it transparent, you can make the icon change with simple templates...
 
+![banner](banner.png)
+
+## Install
+You can install using HACS:
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=inventor7777&repository=ha-simple-button-card&category=plugin)
+
+Or manually add the card as a Lovelace resource:
+
+- URL: `/path/to/simple-button-card.js`
+- Type: `module`
+
 ## Features
 
 - Native Home Assistant `tap_action`, `hold_action`, and `double_tap_action`
@@ -18,13 +30,6 @@ So I started coding this card with the help of GPT 5.4/5.5 Codex and I added eve
 - Optional transparent mode that removes both the card background and shadow
 - Built-in visual editor with `Icon`, `Title`, `Subtext`, and `Interactions` sections
 - Section view sizing through `grid_options`
-
-## Resource
-
-```yaml
-url: /local/custom/simple-button-card/simple-button-card.js
-type: module
-```
 
 ## Example
 
