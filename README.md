@@ -11,6 +11,7 @@ A compact Home Assistant custom card for icon-first buttons with template-driven
 - Template-driven icon, title, and subtext sizes
 - Optional subtext displayed above or below the main title
 - Optional icon top-attach mode
+- Optional transparent mode that removes both the card background and shadow
 - Built-in visual editor with `Icon`, `Title`, `Subtext`, and `Interactions` sections
 - Section view sizing through `grid_options`
 
@@ -37,6 +38,7 @@ secondary_text_template: "{{ states('sensor.ev_range') }} mi"
 secondary_text_size_template: "13"
 secondary_text_above: false
 icon_attach_top: false
+transparent_mode: false
 text_weight: 600
 secondary_text_weight: 400
 text_padding_top: 0
@@ -64,6 +66,7 @@ grid_options:
 ### Root
 
 - `entity`
+- `transparent_mode`
 - `side_padding`
 - `grid_options.rows`
 - `grid_options.columns`
@@ -110,3 +113,4 @@ grid_options:
 - If `icon_template` is blank and `entity` is provided, Home Assistant handles the icon through `state-badge`.
 - `icon_attach_top: true` pins the icon wrapper to the top and ignores icon top/bottom padding.
 - `secondary_text_above: true` renders subtext above the main title.
+- `transparent_mode: true` makes the card fully visually transparent by clearing both the background and the card shadow.
