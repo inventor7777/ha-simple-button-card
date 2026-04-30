@@ -1,6 +1,10 @@
 # Simple Button Card
 
-A compact Home Assistant custom card for icon-first buttons with template-driven text, sizing, and native Home Assistant actions.
+A simple but extremely customizable HA button card.
+
+I got very tired of not being able to adjust fonts and icons the exact way I wanted without using HTML inside the very raw custom:button-card. Even simple stuff like font size was simply not adjustable, much less templatable.
+
+So I started coding this card with the help of GPT 5.4/5.5 Codex and I added everything that I had missed. You can template just about everything, you can make the icon as big as you want, you can make it transparent, you can make the icon change with simple templates...
 
 ## Features
 
@@ -114,3 +118,5 @@ grid_options:
 - `icon_attach_top: true` pins the icon wrapper to the top and ignores icon top/bottom padding.
 - `secondary_text_above: true` renders subtext above the main title.
 - `transparent_mode: true` makes the card fully visually transparent by clearing both the background and the card shadow.
+
+*Full disclaimer: This was fully vibe coded by GPT 5.4 Codex. However, I personally use this card and I am happy with it, so I decided to post in case it could help anyone else.*
