@@ -4,7 +4,7 @@ A simple but extremely customizable HA button card.
 
 I got very tired of not being able to adjust fonts and icons the exact way I wanted without using HTML inside the very raw custom:button-card. Even simple stuff like font size was simply not adjustable, much less templatable.
 
-So I started coding this card with the help of GPT 5.4/5.5 Codex and I added everything that I had missed. You can template just about everything, you can make the icon as big as you want, you can make it transparent, you can make the icon change with simple templates...
+So I started coding this card with the help of GPT 5.4/5.5 Codex and I added everything that I had missed. You can template just about everything, you can make the icon as big as you want, you can make it transparent, you can make the icon change with simple templates...but it does support state icons and state colors natively :)
 
 ![banner](banner.png)
 
