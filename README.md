@@ -1,0 +1,112 @@
+# Simple Button Card
+
+A compact Home Assistant custom card for icon-first buttons with template-driven text, sizing, and native Home Assistant actions.
+
+## Features
+
+- Native Home Assistant `tap_action`, `hold_action`, and `double_tap_action`
+- Optional entity-backed `state-badge` icon rendering
+- Live `icon_color_template` updates
+- Template-driven icon, title, and subtext content
+- Template-driven icon, title, and subtext sizes
+- Optional subtext displayed above or below the main title
+- Optional icon top-attach mode
+- Built-in visual editor with `Icon`, `Title`, `Subtext`, and `Interactions` sections
+- Section view sizing through `grid_options`
+
+## Resource
+
+```yaml
+url: /local/custom/simple-button-card/simple-button-card.js
+type: module
+```
+
+## Example
+
+```yaml
+type: custom:simple-button-card
+entity: sensor.ev_battery
+icon_template: mdi:car-electric
+icon_color_template: >
+  {% set level = states('sensor.ev_battery') | int(0) %}
+  {{ '#4CAF50' if level >= 80 else '#FFB300' if level >= 30 else '#F44336' }}
+icon_size_template: "84"
+text_template: "{{ states('sensor.ev_battery') }}%"
+text_size_template: "28"
+secondary_text_template: "{{ states('sensor.ev_range') }} mi"
+secondary_text_size_template: "13"
+secondary_text_above: false
+icon_attach_top: false
+text_weight: 600
+secondary_text_weight: 400
+text_padding_top: 0
+text_padding_bottom: 0
+secondary_text_padding_top: 0
+secondary_text_padding_bottom: 0
+icon_padding_top: 0
+icon_padding_bottom: 0
+side_padding: 16
+tap_action:
+  action: more-info
+hold_action:
+  action: navigate
+  navigation_path: /dashboard-mobile/ev
+double_tap_action:
+  action: url
+  url_path: https://example.com
+grid_options:
+  rows: 3
+  columns: 3
+```
+
+## Main Options
+
+### Root
+
+- `entity`
+- `side_padding`
+- `grid_options.rows`
+- `grid_options.columns`
+
+### Icon
+
+- `icon_template`
+- `icon_color_template`
+- `icon_size_template`
+- `icon_attach_top`
+- `icon_padding_top`
+- `icon_padding_bottom`
+
+### Title
+
+- `text_template`
+- `text_size_template`
+- `text_weight`
+- `text_padding_top`
+- `text_padding_bottom`
+
+### Subtext
+
+- `secondary_text_template`
+- `secondary_text_size_template`
+- `secondary_text_weight`
+- `secondary_text_padding_top`
+- `secondary_text_padding_bottom`
+- `secondary_text_above`
+
+### Interactions
+
+- `tap_action`
+- `hold_action`
+- `double_tap_action`
+
+## Notes
+
+- Size template fields should be strings in YAML, for example `icon_size_template: "90"`.
+- If a size template is blank or resolves to an invalid value, the card falls back to built-in defaults:
+  `72` for icon size, `24` for title size, and `13` for subtext size.
+- If `text_template` is blank, the card falls back to the entity state and unit, then `friendly_name`.
+- If `secondary_text_template` is blank, no subtext is shown.
+- If `icon_template` is blank and `entity` is provided, Home Assistant handles the icon through `state-badge`.
+- `icon_attach_top: true` pins the icon wrapper to the top and ignores icon top/bottom padding.
+- `secondary_text_above: true` renders subtext above the main title.
