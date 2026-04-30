@@ -61,6 +61,7 @@ function getDefaultConfig() {
     secondary_text_padding_top: 0,
     secondary_text_padding_bottom: 0,
     secondary_text_weight: DEFAULT_SECONDARY_TEXT_WEIGHT,
+    transparent_mode: false,
     side_padding: DEFAULT_PADDING,
     secondary_text_above: false,
     grid_options: {
@@ -154,6 +155,7 @@ function normalizeConfig(config) {
       100,
       900,
     ),
+    transparent_mode: normalizeBoolean(config?.transparent_mode, false),
     side_padding: normalizeNumber(config?.side_padding, DEFAULT_PADDING, 0, 48),
     secondary_text_above: normalizeBoolean(config?.secondary_text_above, false),
     grid_options: normalizeGridOptions(config?.grid_options),
@@ -214,6 +216,7 @@ class SimpleButtonCard extends HTMLElement {
       secondary_text_size_template: "",
       text_weight: DEFAULT_TEXT_WEIGHT,
       secondary_text_weight: DEFAULT_SECONDARY_TEXT_WEIGHT,
+      transparent_mode: false,
       side_padding: DEFAULT_PADDING,
       secondary_text_above: false,
       tap_action: {
@@ -367,8 +370,20 @@ class SimpleButtonCard extends HTMLElement {
           ],
         },
         {
-          name: "side_padding",
-          selector: createNumberSelector(0, 48),
+          type: "grid",
+          name: "",
+          flatten: true,
+          column_min_width: "180px",
+          schema: [
+            {
+              name: "transparent_mode",
+              selector: { boolean: {} },
+            },
+            {
+              name: "side_padding",
+              selector: createNumberSelector(0, 48),
+            },
+          ],
         },
         {
           type: "expandable",
@@ -405,6 +420,8 @@ class SimpleButtonCard extends HTMLElement {
             return "Padding Bottom";
           case "side_padding":
             return "Side Padding";
+          case "transparent_mode":
+            return "Transparent Mode";
           case "secondary_text_above":
             return "Sub Text Above";
           case "text_size_template":
@@ -953,8 +970,8 @@ class SimpleButtonCard extends HTMLElement {
           height: 100%;
           overflow: hidden;
           border-radius: var(--ha-card-border-radius, 18px);
-          background: var(--ha-card-background, var(--card-background-color, white));
-          box-shadow: var(--ha-card-box-shadow, var(--shadow-elevation-2dp_-_box-shadow));
+          background: var(--simple-button-card-background, var(--ha-card-background, var(--card-background-color, white)));
+          box-shadow: var(--simple-button-card-shadow, var(--ha-card-box-shadow, var(--shadow-elevation-2dp_-_box-shadow)));
         }
 
         .button {
@@ -1144,10 +1161,21 @@ class SimpleButtonCard extends HTMLElement {
       100,
       900,
     );
+    const transparentMode = normalizeBoolean(this._config.transparent_mode, false);
     const secondaryTextAbove = normalizeBoolean(this._config.secondary_text_above, false);
+    const haCard = this.shadowRoot.querySelector("ha-card");
     const button = this.shadowRoot.querySelector("#button");
     const textEl = this.shadowRoot.querySelector(".text");
     const secondaryTextEl = this.shadowRoot.querySelector(".secondary-text");
+
+    haCard?.style.setProperty(
+      "--simple-button-card-background",
+      transparentMode ? "rgba(0, 0, 0, 0)" : "var(--ha-card-background, var(--card-background-color, white))",
+    );
+    haCard?.style.setProperty(
+      "--simple-button-card-shadow",
+      transparentMode ? "none" : "var(--ha-card-box-shadow, var(--shadow-elevation-2dp_-_box-shadow))",
+    );
 
     button?.setAttribute(
       "style",
