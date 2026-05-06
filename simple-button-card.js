@@ -7,8 +7,6 @@ const DEFAULT_SECONDARY_TEXT_WEIGHT = 400;
 const DEFAULT_PADDING = 16;
 const DEFAULT_GRID_ROWS = 3;
 const DEFAULT_GRID_COLUMNS = 3;
-const HOLD_DELAY_MS = 500;
-const DOUBLE_TAP_DELAY_MS = 250;
 const TEMPLATE_KEYS = ["icon", "iconColor", "text", "secondary", "iconSize", "textSize", "secondarySize"];
 
 function createNumberSelector(min, max, step = 1) {
@@ -126,6 +124,19 @@ function normalizeBoolean(value, fallback = false) {
   return Boolean(value);
 }
 
+function bindActionHandler(element, options) {
+  const host = document.body;
+  if (!host) return;
+
+  let actionHandler = host.querySelector("action-handler");
+  if (!actionHandler) {
+    actionHandler = document.createElement("action-handler");
+    host.appendChild(actionHandler);
+  }
+
+  actionHandler?.bind(element, options);
+}
+
 function normalizeConfig(config) {
   const defaults = getDefaultConfig();
 
@@ -179,8 +190,6 @@ class SimpleButtonCard extends HTMLElement {
     super();
     this.attachShadow({ mode: "open" });
     this._resizeObserver = undefined;
-    this._holdTimer = undefined;
-    this._tapTimer = undefined;
     this._templateSubscriptions = {};
     this._templateRequestIds = {
       icon: 0,
@@ -200,8 +209,7 @@ class SimpleButtonCard extends HTMLElement {
       textSize: "",
       secondarySize: "",
     };
-    this._didHold = false;
-    this._lastPointerDown = false;
+    this._handleActionEvent = this._handleActionEvent.bind(this);
   }
 
   static getStubConfig() {
@@ -543,7 +551,6 @@ class SimpleButtonCard extends HTMLElement {
   }
 
   disconnectedCallback() {
-    this._clearTimers();
     this._clearTemplateSubscription();
     this._resizeObserver?.disconnect();
     this._resizeObserver = undefined;
@@ -838,72 +845,19 @@ class SimpleButtonCard extends HTMLElement {
     );
   }
 
-  _clearTimers() {
-    if (this._holdTimer) {
-      clearTimeout(this._holdTimer);
-      this._holdTimer = undefined;
-    }
-
-    if (this._tapTimer) {
-      clearTimeout(this._tapTimer);
-      this._tapTimer = undefined;
-    }
-  }
-
-  _startHold() {
-    this._didHold = false;
-    this._lastPointerDown = true;
-    this._clearTimers();
-
-    if (this._config?.hold_action?.action === "none") return;
-
-    this._holdTimer = window.setTimeout(() => {
-      this._holdTimer = undefined;
-      this._didHold = true;
-      this._dispatchAction("hold");
-    }, HOLD_DELAY_MS);
-  }
-
-  _cancelHold() {
-    this._lastPointerDown = false;
-    if (this._holdTimer) {
-      clearTimeout(this._holdTimer);
-      this._holdTimer = undefined;
-    }
-  }
-
-  _handleTap() {
-    if (this._didHold) {
-      this._didHold = false;
-      return;
-    }
-
-    if (this._config?.double_tap_action?.action && this._config.double_tap_action.action !== "none") {
-      if (this._tapTimer) {
-        clearTimeout(this._tapTimer);
-        this._tapTimer = undefined;
-        this._dispatchAction("double_tap");
-        return;
-      }
-
-      this._tapTimer = window.setTimeout(() => {
-        this._tapTimer = undefined;
-        this._dispatchAction("tap");
-      }, DOUBLE_TAP_DELAY_MS);
-      return;
-    }
-
-    this._dispatchAction("tap");
+  _handleActionEvent(event) {
+    const action = event?.detail?.action;
+    if (!action) return;
+    this._dispatchAction(action);
   }
 
   _attachEvents(button) {
     if (!button) return;
 
-    button.addEventListener("pointerdown", () => this._startHold());
-    button.addEventListener("pointerup", () => this._cancelHold());
-    button.addEventListener("pointerleave", () => this._cancelHold());
-    button.addEventListener("pointercancel", () => this._cancelHold());
-    button.addEventListener("click", () => this._handleTap());
+    if (button.dataset.actionBound === "true") return;
+
+    button.dataset.actionBound = "true";
+    button.addEventListener("action", this._handleActionEvent);
   }
 
   _getIconRenderData(stateObj) {
@@ -1167,6 +1121,13 @@ class SimpleButtonCard extends HTMLElement {
     const button = this.shadowRoot.querySelector("#button");
     const textEl = this.shadowRoot.querySelector(".text");
     const secondaryTextEl = this.shadowRoot.querySelector(".secondary-text");
+
+    if (button) {
+      bindActionHandler(button, {
+        hasHold: this._config?.hold_action?.action !== "none",
+        hasDoubleClick: this._config?.double_tap_action?.action !== "none",
+      });
+    }
 
     haCard?.style.setProperty(
       "--simple-button-card-background",
