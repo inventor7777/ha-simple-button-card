@@ -925,6 +925,8 @@ class SimpleButtonCard extends HTMLElement {
           overflow: hidden;
           border-radius: var(--ha-card-border-radius, 18px);
           background: var(--simple-button-card-background, var(--ha-card-background, var(--card-background-color, white)));
+          backdrop-filter: var(--simple-button-card-backdrop-filter, initial);
+          -webkit-backdrop-filter: var(--simple-button-card-webkit-backdrop-filter, initial);
           box-shadow: var(--simple-button-card-shadow, var(--ha-card-box-shadow, var(--shadow-elevation-2dp_-_box-shadow)));
         }
 
@@ -1136,6 +1138,14 @@ class SimpleButtonCard extends HTMLElement {
     haCard?.style.setProperty(
       "--simple-button-card-shadow",
       transparentMode ? "none" : "var(--ha-card-box-shadow, var(--shadow-elevation-2dp_-_box-shadow))",
+    );
+    haCard?.style.setProperty(
+      "--simple-button-card-backdrop-filter",
+      transparentMode ? "none" : "initial",
+    );
+    haCard?.style.setProperty(
+      "--simple-button-card-webkit-backdrop-filter",
+      transparentMode ? "none" : "initial",
     );
 
     button?.setAttribute(
