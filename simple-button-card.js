@@ -102,16 +102,6 @@ function normalizeActionConfig(actionConfig, fallbackAction = "none") {
   };
 }
 
-function formatValueWithUnit(value, unit) {
-  if (!unit) return value;
-
-  if (unit === "%" || unit === "‰") {
-    return `${value}${unit}`;
-  }
-
-  return `${value} ${unit}`;
-}
-
 function normalizeBoolean(value, fallback = false) {
   if (value === undefined || value === null) return fallback;
   if (typeof value === "string") {
@@ -681,17 +671,7 @@ class SimpleButtonCard extends HTMLElement {
       return "";
     }
 
-    const numericValue = Number(rawState);
-    const unit = stateObj.attributes?.unit_of_measurement || "";
-
-    if (Number.isFinite(numericValue)) {
-      const formatted = Number.isInteger(numericValue)
-        ? String(numericValue)
-        : String(Number(numericValue.toFixed(2)));
-      return formatValueWithUnit(formatted, unit);
-    }
-
-    return String(rawState);
+    return this._hass?.formatEntityState?.(stateObj) || String(rawState);
   }
 
   _getDefaultText() {
